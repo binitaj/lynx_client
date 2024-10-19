@@ -21,21 +21,43 @@ public class CryptController {
     @GetMapping(path = "/encrypt")
     public ResponseEntity<String> encrypt(@RequestParam String q, @RequestParam String k) {
         Secret s = getSecret(k, q, false);
-        System.out.print("Attempting to encrypt the string: '" + q);
+//        System.out.print("Attempting to encrypt the string: '" + q);
         ResponseEntity<Secret> resp = restTemplate.postForEntity("https://localhost:8443/encrypt", s, Secret.class);
+        if(resp.hasBody()) {
         String respStr = resp.getBody().encrypted;
-        System.out.println("', ciphertext: '"  + respStr + "'");
+//        System.out.println("', ciphertext: '"  + respStr + "'");
         return ResponseEntity.ok(respStr);
+        } else {
+            return ResponseEntity.unprocessableEntity().build();
+        }
     }
 
     @GetMapping(path = "/decrypt")
     public ResponseEntity<String> decrypt(@RequestParam String q) {
         Secret s = getSecret(q, true);
-        System.out.print("Attempting to decrypt the ciphertext: '" + q);
+//        System.out.print("Attempting to decrypt the ciphertext: '" + q);
         ResponseEntity<Secret> resp = restTemplate.postForEntity("https://localhost:8443/decrypt", s, Secret.class);
+        if(resp.hasBody()) {
         String respStr = resp.getBody().data;
-        System.out.println("', retrieved: '"  + respStr + "'");
+//        System.out.println("', retrieved: '"  + respStr + "'");
         return ResponseEntity.ok(respStr);
+        } else {
+            return ResponseEntity.unprocessableEntity().build();
+        }
+    }
+
+    @GetMapping(path = "/store")
+    public ResponseEntity<String> store(@RequestParam String q, @RequestParam String k) {
+        Secret s = getSecret(k, q, false);
+        System.out.print("Attempting to store the string: '" + q);
+        ResponseEntity<Secret> resp = restTemplate.postForEntity("https://localhost:8443/store", s, Secret.class);
+        if(resp.hasBody()) {
+            String respStr = resp.getBody().encrypted;
+            System.out.println("', ciphertext: '" + respStr + "'");
+            return ResponseEntity.ok(respStr);
+        } else {
+            return ResponseEntity.unprocessableEntity().build();
+        }
     }
 
 

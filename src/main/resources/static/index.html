@@ -191,7 +191,28 @@
                     document.getElementById("err").textContent = "Error fetching data: " + error;
             }
         }
-        </script>
+
+       async function invokeREST4() {
+            let key = document.getElementById("key").value;
+            let inputText = document.getElementById("raw").value;
+            let apiUrl = "http://localhost:8080/store?q=" + inputText+"&k="+key; // Replace with your API endpoint
+            try {
+             const response = await fetch(apiUrl);
+                 const data = await response.text();
+                 console.log(data);
+                 document.getElementById("encout").value = document.getElementById("enc").value;
+                 document.getElementById("keyout").value = document.getElementById("key").value;
+                 document.getElementById("rawout").value = data; // Pretty-print JSON
+                 document.getElementById("raw").value = "";
+                 document.getElementById("key").value = "";
+                 document.getElementById("enc").value = "";
+            }
+            catch(error) {
+                    document.getElementById("err").textContent = "Error fetching data: " + error;
+            }
+        }
+
+    </script>
 </head>
 <body>
 
@@ -206,6 +227,7 @@
     </p>
     <button class="button-3" role="button" onclick="invokeREST()">Encrypt</button>
     <button class="button-3" role="button" onclick="invokeREST2()">Decrypt</button>
+    <button class="button-3" role="button" onclick="invokeREST4()">Store</button>
     <button class="button-3" role="button" onclick="invokeREST3()">Retrieve</button>
     <br>
     <p>
