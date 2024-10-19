@@ -134,47 +134,85 @@
     <script>
        async function invokeREST() {
             let inputText = document.getElementById("raw").value;
-            let apiUrl = "http://localhost:8080/encrypt?q=" + inputText; // Replace with your API endpoint
+            let key = document.getElementById("key").value;
+            let apiUrl = "http://localhost:8080/encrypt?k=" + key + "&q=" + inputText; // Replace with your API endpoint
             try {
+            console.log(apiUrl);
              const response = await fetch(apiUrl);
                  const data = await response.text();
                  console.log(data);
-             document.getElementById("enc").value = data; // Pretty-print JSON
+                 document.getElementById("rawout").value = document.getElementById("raw").value;
+                 document.getElementById("keyout").value = document.getElementById("key").value;
+                 document.getElementById("encout").value = data; // Pretty-print JSON
+                 document.getElementById("raw").value = "";
+                 document.getElementById("key").value = "";
+                 document.getElementById("enc").value = "";
             }
             catch(error) {
                     document.getElementById("err").textContent = "Error fetching data: " + error;
             }
         }
 
-        async function invokeREST2() {
-            let inputText = document.getElementById("enc").value;
+       async function invokeREST2() {
+            let inputText = encodeURIComponent(document.getElementById("enc").value);
             let apiUrl = "http://localhost:8080/decrypt?q=" + inputText; // Replace with your API endpoint
             try {
              const response = await fetch(apiUrl);
                  const data = await response.text();
                  console.log(data);
-             document.getElementById("raw").value = data; // Pretty-print JSON
+                 document.getElementById("encout").value = document.getElementById("enc").value;
+                 document.getElementById("keyout").value = document.getElementById("key").value;
+                 document.getElementById("rawout").value = data; // Pretty-print JSON
+                 document.getElementById("raw").value = "";
+                 document.getElementById("key").value = "";
+                 document.getElementById("enc").value = "";
             }
             catch(error) {
-                    document.getElementById("error").textContent = "Error fetching data: " + error;
+                    document.getElementById("err").textContent = "Error fetching data: " + error;
             }
         }
-    </script>
+
+
+       async function invokeREST3() {
+            let inputText = document.getElementById("key").value;
+            let apiUrl = "http://localhost:8080/retrieve?k=" + inputText; // Replace with your API endpoint
+            try {
+             const response = await fetch(apiUrl);
+                 const data = await response.text();
+                 console.log(data);
+                 document.getElementById("encout").value = document.getElementById("enc").value;
+                 document.getElementById("keyout").value = document.getElementById("key").value;
+                 document.getElementById("rawout").value = data; // Pretty-print JSON
+                 document.getElementById("raw").value = "";
+                 document.getElementById("key").value = "";
+                 document.getElementById("enc").value = "";
+            }
+            catch(error) {
+                    document.getElementById("err").textContent = "Error fetching data: " + error;
+            }
+        }
+        </script>
 </head>
 <body>
 
 <h1>REST API Tester</h1>
 <div width="100%" class="form__group field">
     <p>
-        <input type="text" id="raw" class="form__field" placeholder="Enter unencrypted text here">
+        <input type="text" id="key" class="form__field" placeholder="Key for the request">
+        <br>
+        <input type="text" id="raw" class="form__field" placeholder="Enter plain text here">
+        <br>
+        <input type="text" id="enc" class="form__field" placeholder="Enter ciphertext here">
     </p>
     <button class="button-3" role="button" onclick="invokeREST()">Encrypt</button>
+    <button class="button-3" role="button" onclick="invokeREST2()">Decrypt</button>
+    <button class="button-3" role="button" onclick="invokeREST3()">Retrieve</button>
     <br>
     <p>
-        <input type="text" class="form__field" placeholder="Enter encrypted text here" name="enc" id="enc" />
+        <input type="keyout" class="form__field" placeholder="Result here (key)" name="keyout" id="keyout" />
+        <input type="rawout" class="form__field" placeholder="Result here (plain text)" name="rawout" id="rawout" />
+        <input type="encout" class="form__field" placeholder="Result here (ciphertext)" name="encout" id="encout" />
     </p>
-    <button class="button-3" role="button" onclick="invokeREST2()">Decrypt</button>
-    <br>
     <br>
     <p>
         <label for="err">Error:</label>
